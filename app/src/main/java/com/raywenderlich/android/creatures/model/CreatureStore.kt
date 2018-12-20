@@ -86,4 +86,7 @@ object CreatureStore {
 
     //todo favorite 추가
     fun getFavoriteCreatures(context: Context): List<Creature>? = Favorites.getFavorites(context)?.mapNotNull { getCreatureById(it) }
+
+    //food 추가
+    fun getFoodCreatures(creature: Creature): List<Food> = creature.foods?.mapNotNull { getFoodById(it) }
 }
