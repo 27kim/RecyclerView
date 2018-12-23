@@ -34,6 +34,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.*
 import com.raywenderlich.android.creatures.R
@@ -45,6 +46,12 @@ class AllFragment : Fragment() {
 
     private val adapter = CreatureCardAdapter(CreatureStore.getCreatures().toMutableList())
     private lateinit var layoutManager: StaggeredGridLayoutManager
+
+    private lateinit var listItemDecoration: RecyclerView.ItemDecoration
+    private lateinit var gridItemDecoration: RecyclerView.ItemDecoration
+    private lateinit var listMenuItem: MenuItem
+    private lateinit var gridMenuItem: MenuItem
+    private var gridState = GridState.GRID
 
     companion object {
         fun newInstance(): AllFragment {
@@ -78,6 +85,13 @@ class AllFragment : Fragment() {
 //    }
         creatureRecyclerView.layoutManager = layoutManager
         creatureRecyclerView.adapter = adapter
+
+        val spacingInPixels = resources.getDimensionPixelSize(R.dimen.creature_card_grid_layout_margin)
+
+        listItemDecoration = SpacingItemDecoration(1, spacingInPixels)
+        gridItemDecoration = SpacingItemDecoration(2, spacingInPixels)
+
+        creatureRecyclerView.addItemDecoration(gridItemDecoration)
     }
 
     //옵션 메뉴 만들기 위
@@ -98,14 +112,45 @@ class AllFragment : Fragment() {
         val id = item.itemId
         when (id) {
             R.id.action_span_1 -> {
-                showListView()
+                gridState = GridState.LIST
+                updateRecyclerView(1, listItemDecoration, gridItemDecoration)
                 return true
             }
             R.id.action_span_2 -> {
-                showGridView()
+                gridState = GridState.GRID
+                updateRecyclerView(2, gridItemDecoration, listItemDecoration)
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    //Item Spacing 중 추가
+    private fun updateRecyclerView(spanCount: Int, addItemDecoration: RecyclerView.ItemDecoration, removeItemDecoration: RecyclerView.ItemDecoration) {
+        layoutManager.spanCount = spanCount
+        creatureRecyclerView.removeItemDecoration(removeItemDecoration)
+        creatureRecyclerView.addItemDecoration(addItemDecoration)
+    }
+
+
+    //Item Spacing 중 추가
+    private enum class GridState {
+        LIST, GRID
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        listMenuItem = menu.findItem(R.id.action_span_1)
+        gridMenuItem = menu.findItem(R.id.action_span_2)
+        when (gridState) {
+            GridState.LIST -> {
+                listMenuItem.isEnabled = false
+                gridMenuItem.isEnabled = true
+            }
+            GridState.GRID -> {
+                listMenuItem.isEnabled = true
+                gridMenuItem.isEnabled = false
+            }
+        }
     }
 }

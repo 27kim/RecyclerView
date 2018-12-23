@@ -30,54 +30,35 @@
 
 package com.raywenderlich.android.creatures.ui
 
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
+import android.graphics.Rect
+import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
-import com.raywenderlich.android.creatures.R
-import com.raywenderlich.android.creatures.model.CreatureStore
-import kotlinx.android.synthetic.main.fragment_favorites.*
 
 
-class FavoritesFragment : Fragment() {
+class SpacingItemDecoration(private val spanCount: Int, private val spacing: Int)
+  : RecyclerView.ItemDecoration() {
 
-  //FavoritesFragment 에 끼워넣을 어댑터이기 때문에 여기서 선언을 해놓는데
-  //여기서 불러놨기 때문에 adapter를 업데이트 하는 것도 가능해진다.
-  private val adapter = CreatureAdapter(mutableListOf())
+  override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+    val position = parent.getChildAdapterPosition(view)
 
-  companion object {
-    fun newInstance(): FavoritesFragment {
-      return FavoritesFragment()
+    outRect.top = spacing / 2
+    outRect.bottom = spacing / 2
+    outRect.left = spacing / 2
+    outRect.right = spacing / 2
+
+    // Adjust top edge
+    if (position < spanCount) {
+      outRect.top = spacing
     }
-  }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.fragment_favorites, container, false)
-  }
+    // Adjust left edge
+    if (position % spanCount == 0) {
+      outRect.left = spacing
+    }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    //todo onViewCreated 에서 해줘야 하네?
-    favoriteRecyclerView.layoutManager = LinearLayoutManager(activity)
-    favoriteRecyclerView.adapter = adapter
-
-    //divider 추가
-    val heightInPixels = resources.getDimensionPixelSize(R.dimen.list_item_divider_height)
-    favoriteRecyclerView.addItemDecoration(DividerItemDecoration(ContextCompat.getColor(context!!, R.color.black), heightInPixels))
-
-  }
-
-  override fun onResume() {
-    super.onResume()
-
-    val favorites = CreatureStore.getFavoriteCreatures(context!!)
-    favorites?.let{
-      //여기서 업데이트 해버림
-      adapter.updateCreatures(it)
+    // Adjust right edge
+    if ((position + 1) % spanCount == 0) {
+      outRect.right = spacing
     }
   }
 }

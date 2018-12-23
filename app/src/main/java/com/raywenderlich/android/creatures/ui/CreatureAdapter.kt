@@ -3,6 +3,7 @@ package com.raywenderlich.android.creatures.ui
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.app.inflate
 import com.raywenderlich.android.creatures.model.Creature
@@ -10,7 +11,7 @@ import kotlinx.android.synthetic.main.list_item_creature.view.*
 
 class CreatureAdapter(private  val creatures : MutableList<Creature>) : RecyclerView.Adapter<CreatureAdapter.ViewHolder>(){
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
 
         init {
             itemView.setOnClickListener(this)
@@ -32,6 +33,9 @@ class CreatureAdapter(private  val creatures : MutableList<Creature>) : Recycler
 
             itemView.fullName2.text =  creature.fullName
             itemView.nickName.text = creature.nickname
+
+            //bind시에 animateView 호출함
+            animateView(itemView)
         }
 
     }
@@ -52,5 +56,12 @@ class CreatureAdapter(private  val creatures : MutableList<Creature>) : Recycler
         this.creatures.clear()
         this.creatures.addAll(creatures)
         notifyDataSetChanged()
+    }
+
+    private fun animateView(viewToAnimate: View) {
+        if (viewToAnimate.animation == null) {
+            val animation = AnimationUtils.loadAnimation(viewToAnimate.context, R.anim.scale_xy)
+            viewToAnimate.animation = animation
+        }
     }
 }
