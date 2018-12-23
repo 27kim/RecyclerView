@@ -34,9 +34,8 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.widget.StaggeredGridLayoutManager
+import android.view.*
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.model.CreatureStore
 import kotlinx.android.synthetic.main.fragment_all.*
@@ -44,28 +43,69 @@ import kotlinx.android.synthetic.main.fragment_all.*
 
 class AllFragment : Fragment() {
 
-  private val adapter = CreatureCardAdapter(CreatureStore.getCreatures().toMutableList())
+    private val adapter = CreatureCardAdapter(CreatureStore.getCreatures().toMutableList())
+    private lateinit var layoutManager: StaggeredGridLayoutManager
 
-  companion object {
-    fun newInstance(): AllFragment {
-      return AllFragment()
+    companion object {
+        fun newInstance(): AllFragment {
+            return AllFragment()
+        }
     }
-  }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-    return inflater.inflate(R.layout.fragment_all, container, false)
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    val layoutManager = GridLayoutManager(activity, 3, GridLayoutManager.VERTICAL, false)
-    layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-      override fun getSpanSize(position: Int): Int {
-        return if ((position + 1) % 7 == 0) 3 else 1
-      }
+    //메뉴 위해서 아래 펑션 추가 setHasOptionsMenu(true)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
-    creatureRecyclerView.layoutManager = layoutManager
-    creatureRecyclerView.adapter = adapter
-  }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_all, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        layoutManager = StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL)
+        //메뉴 위해서 아래 주석처리
+//        val layoutManager = StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL)
+
+
+//    val layoutManager = GridLayoutManager(activity, 3, GridLayoutManager.VERTICAL, false)
+//    layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+//      override fun getSpanSize(position: Int): Int {
+//        return if ((position + 1) % 7 == 0) 3 else 1
+//      }
+//    }
+        creatureRecyclerView.layoutManager = layoutManager
+        creatureRecyclerView.adapter = adapter
+    }
+
+    //옵션 메뉴 만들기 위
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_all, menu)
+    }
+
+    private fun showListView() {
+        layoutManager.spanCount = 1
+    }
+
+    private fun showGridView() {
+        layoutManager.spanCount = 2
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        when (id) {
+            R.id.action_span_1 -> {
+                showListView()
+                return true
+            }
+            R.id.action_span_2 -> {
+                showGridView()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }
