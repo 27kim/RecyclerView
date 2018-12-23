@@ -84,7 +84,7 @@ object CreatureStore {
 
     fun getCreatures() = creatures
 
-    //todo favorite 추가
+    //todo favorite 추가 신기하게 가져오네
     fun getFavoriteCreatures(context: Context): List<Creature>? = Favorites.getFavorites(context)?.mapNotNull { getCreatureById(it) }
 
     //food 추가
