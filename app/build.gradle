@@ -32,5 +32,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "com.android.support:recyclerview-v7:$support_lib_version"
+    //cardview 추가
+    implementation "com.android.support:cardview-v7:$support_lib_version"
+    //pallete 추가 : 카드뷰의 배경색을 아이템의 색과 매치 시킬 때 사용 됨
+    implementation "com.android.support:palette-v7:$support_lib_version"
 
 }
