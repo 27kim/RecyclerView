@@ -28,22 +28,9 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.creatures.ui
-
-import android.content.Intent
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+package com.raywenderlich.android.creatures.app
 
 
-class SplashActivity : AppCompatActivity() {
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-
-    //todo 어떻게 splash 가 생기고 있는건지 봐야함
-    //Andorid_manifest 에서 Launcher / Main 으로 들어가있고, 스타일이 정해져있음
-    val intent = Intent(this, MainActivity::class.java)
-    startActivity(intent)
-    finish()
-  }
+object Constants {
+  const val JUPITER = "Jupiter"
 }

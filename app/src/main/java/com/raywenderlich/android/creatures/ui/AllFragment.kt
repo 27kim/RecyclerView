@@ -45,8 +45,8 @@ import kotlinx.android.synthetic.main.fragment_all.*
 class AllFragment : Fragment() {
 
     private val adapter = CreatureCardAdapter(CreatureStore.getCreatures().toMutableList())
-    private lateinit var layoutManager: StaggeredGridLayoutManager
-
+    private lateinit var layoutManager: GridLayoutManager
+    //    private lateinit var layoutManager: StaggeredGridLayoutManager
     private lateinit var listItemDecoration: RecyclerView.ItemDecoration
     private lateinit var gridItemDecoration: RecyclerView.ItemDecoration
     private lateinit var listMenuItem: MenuItem
@@ -72,7 +72,13 @@ class AllFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        layoutManager = StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL)
+        layoutManager = GridLayoutManager(context, 2 , GridLayoutManager.VERTICAL, false)
+        //todo object 사용하는 방법 쥑이
+        layoutManager.spanSizeLookup = object  : GridLayoutManager.SpanSizeLookup(){
+            override fun getSpanSize(position: Int): Int {
+                return (adapter.spanSizeAtPosition(position))
+            }
+        }
         //메뉴 위해서 아래 주석처리
 //        val layoutManager = StaggeredGridLayoutManager(2, GridLayoutManager.VERTICAL)
 
@@ -128,6 +134,7 @@ class AllFragment : Fragment() {
     //Item Spacing 중 추가
     private fun updateRecyclerView(spanCount: Int, addItemDecoration: RecyclerView.ItemDecoration, removeItemDecoration: RecyclerView.ItemDecoration) {
         layoutManager.spanCount = spanCount
+        adapter.jupiterSpanSize = spanCount
         creatureRecyclerView.removeItemDecoration(removeItemDecoration)
         creatureRecyclerView.addItemDecoration(addItemDecoration)
     }

@@ -6,10 +6,13 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import com.raywenderlich.android.creatures.R
 import com.raywenderlich.android.creatures.app.inflate
+import com.raywenderlich.android.creatures.model.CompositeItem
 import com.raywenderlich.android.creatures.model.Creature
 import kotlinx.android.synthetic.main.list_item_creature.view.*
+import kotlinx.android.synthetic.main.list_item_planet_header.view.*
 
-class CreatureAdapter(private  val creatures : MutableList<Creature>) : RecyclerView.Adapter<CreatureAdapter.ViewHolder>(){
+class CreatureAdapter(private val compositeItems: MutableList<CompositeItem>) : RecyclerView.Adapter<CreatureAdapter.ViewHolder>() {
+//class CreatureAdapter(private val creatures: MutableList<CompositeItem>) : RecyclerView.Adapter<CreatureAdapter.ViewHolder>() {
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
 
@@ -25,7 +28,7 @@ class CreatureAdapter(private  val creatures : MutableList<Creature>) : Recycler
 
         private lateinit var creature : Creature
 
-        fun bind(creature : Creature){
+       /* fun bind(creature : Creature){
             this.creature = creature
 
             val context = itemView.context
@@ -36,26 +39,44 @@ class CreatureAdapter(private  val creatures : MutableList<Creature>) : Recycler
 
             //bind시에 animateView 호출함
             animateView(itemView)
+        }*/
+
+        fun bind(compositeItem: CompositeItem) {
+            if (compositeItem.isHeader) {
+                itemView.headerName.text = compositeItem.header.name
+            } else {
+                creature = compositeItem.creature
+                val context = itemView.context
+                itemView.creatureImage.setImageResource(context.resources.getIdentifier(creature.thumbnail, null, context.packageName))
+                itemView.fullName2.text = creature.fullName
+                itemView.nickName.text = creature.nickname
+                animateView(itemView)
+            }
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreatureAdapter.ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.list_item_creature))
+        //return ViewHolder(parent.inflate(R.layout.list_item_creature))
+        return when(viewType) {
+            ViewType.HEADER.ordinal -> ViewHolder(parent.inflate(R.layout.list_item_planet_header))
+            ViewType.CREATURE.ordinal -> ViewHolder(parent.inflate(R.layout.list_item_creature))
+            else -> throw IllegalArgumentException("Illegal value for viewType")
+        }
     }
 
-    override fun getItemCount(): Int = creatures.size
+    override fun getItemCount(): Int = compositeItems.size
 
+    override fun getItemViewType(position: Int): Int {
+        return if (compositeItems[position].isHeader) {
+            ViewType.HEADER.ordinal
+        } else {
+            ViewType.CREATURE.ordinal
+        }
+    }
 
     override fun onBindViewHolder(holder: CreatureAdapter.ViewHolder, position: Int) {
-        holder.bind(creatures[position])
-        println("creatures[position] ? ${creatures[position].fullName}")
-    }
-
-    fun updateCreatures(creatures: List<Creature>){
-        this.creatures.clear()
-        this.creatures.addAll(creatures)
-        notifyDataSetChanged()
+        holder.bind(compositeItems[position])
     }
 
     private fun animateView(viewToAnimate: View) {
@@ -64,4 +85,17 @@ class CreatureAdapter(private  val creatures : MutableList<Creature>) : Recycler
             viewToAnimate.animation = animation
         }
     }
+
+    fun updateCreatures(creatures: List<CompositeItem>){
+//    fun updateCreatures(creatures: List<Creature>){
+        this.compositeItems.clear()
+        this.compositeItems.addAll(creatures)
+        notifyDataSetChanged()
+    }
+
+    enum class ViewType {
+        HEADER, CREATURE
+    }
+
+
 }

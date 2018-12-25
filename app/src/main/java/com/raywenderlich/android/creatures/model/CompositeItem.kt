@@ -28,22 +28,36 @@
  * THE SOFTWARE.
  */
 
-package com.raywenderlich.android.creatures.ui
-
-import android.content.Intent
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+package com.raywenderlich.android.creatures.model
 
 
-class SplashActivity : AppCompatActivity() {
+class CompositeItem {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  lateinit var creature: Creature
+    private set
 
-    //todo 어떻게 splash 가 생기고 있는건지 봐야함
-    //Andorid_manifest 에서 Launcher / Main 으로 들어가있고, 스타일이 정해져있음
-    val intent = Intent(this, MainActivity::class.java)
-    startActivity(intent)
-    finish()
+  lateinit var header: Header
+    private set
+
+  var isHeader = false
+    private set
+
+  companion object {
+    fun withCreature(creature: Creature): CompositeItem {
+      val composite = CompositeItem()
+      composite.creature = creature
+      return composite
+    }
+
+    fun withHeader(header: Header): CompositeItem {
+      val composite = CompositeItem()
+      composite.header = header
+      composite.isHeader = true
+      return composite
+    }
+  }
+
+  override fun toString(): String {
+    return if (isHeader) header.name else creature.nickname
   }
 }

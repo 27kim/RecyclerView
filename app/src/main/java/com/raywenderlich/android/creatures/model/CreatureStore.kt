@@ -65,6 +65,7 @@ object CreatureStore {
 
     fun getCreatureById(id: Int) = creatures.firstOrNull { it.id == id }
 
+    //food의 id 가 param 으로 받은 id 와 같은 객체가 있으면 첫 번째 것을 리턴, 아니면 null
     fun getFoodById(id: Int) = foods.firstOrNull { it.id == id }
 
     private fun loadJSONFromAsset(filename: String, context: Context): String? {
@@ -85,8 +86,27 @@ object CreatureStore {
     fun getCreatures() = creatures
 
     //todo favorite 추가 신기하게 가져오네
+    /**
+     * getFavorites 는 json 에서 list 를 가지고 오는데, 가져오는 리스트 중 null 이 아닌 것들에 대해 id로 객체를 가지고 와서 리스트를 리턴한다.
+     */
     fun getFavoriteCreatures(context: Context): List<Creature>? = Favorites.getFavorites(context)?.mapNotNull { getCreatureById(it) }
 
     //food 추가
     fun getFoodCreatures(creature: Creature): List<Food> = creature.foods?.mapNotNull { getFoodById(it) }
+
+    //composite 추가
+    fun getFavoriteComposites(context: Context): List<CompositeItem>? {
+        val favoritesByPlanet = getFavoriteCreatures(context)?.sortedBy { it.planet }
+        val planets = favoritesByPlanet?.map { it.planet }?.distinct()
+
+        val composites = mutableListOf<CompositeItem>()
+        planets?.let {
+            for (planet in planets) {
+                composites.add(CompositeItem.withHeader(Header(planet)))
+                val favoritesForPlanet = favoritesByPlanet.filter { it.planet == planet }.map { CompositeItem.withCreature(it) }
+                composites.addAll(favoritesForPlanet)
+            }
+        }
+        return composites
+    }
 }

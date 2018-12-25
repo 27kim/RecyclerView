@@ -7,7 +7,10 @@
     <string name="content_description_favorite_button">Creature Favorite Button</string>
     <string name="detail_title_format">Creature: %1$s</string>
     <string name="content_description_cretaure_image">Creature Image</string>
+    <string name="content_description_creature_image">Creature Image</string>
     <string name="content_description_creaure_food">Food Image</string>
     <string name="menu_span_1">Span 1</string>
     <string name="menu_span_2">Span 2</string>
+    <string name="jupiter_slogan">JUPITER RULES!</string>
+
 </resources>
